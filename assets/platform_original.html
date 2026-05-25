@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoftSkill Lab — Информатика пәні</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #161922;
+    --bg3: #1e2230;
+    --card: #1a1f2e;
+    --card2: #212638;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #eef0f6;
+    --muted: #8b90a7;
+    --accent: #6c63ff;
+    --accent2: #a78bfa;
+    --teal: #2dd4bf;
+    --amber: #f59e0b;
+    --coral: #f87171;
+    --green: #4ade80;
+    --blue: #60a5fa;
+    --glow: rgba(108,99,255,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+  .logo {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .logo-mark {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  .logo-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+  }
+  .nav-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0 20px 8px;
+    margin-top: 8px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: var(--muted);
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+    margin: 1px 0;
+  }
+  .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+  .nav-item.active {
+    color: var(--accent2);
+    background: rgba(108,99,255,0.1);
+    border-left-color: var(--accent);
+  }
+  .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--accent);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 10px;
+  }
+  .sidebar-bottom {
+    margin-top: auto;
+    padding: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--teal));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: white;
+    flex-shrink: 0;
+  }
+  .user-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .user-role { font-size: 11px; color: var(--muted); }
+
+  /* MAIN */
+  .main {
+    margin-left: 240px;
+    flex: 1;
+    min-height: 100vh;
+  }
+  .topbar {
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg2);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .topbar-title { font-size: 16px; font-weight: 700; }
+  .topbar-meta { font-size: 13px; color: var(--muted); }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .pill-btn {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: 'Manrope', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .pill-btn:hover { color: var(--text); border-color: var(--border2); background: var(--card2); }
+  .pill-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-weight: 600;
+  }
+  .pill-btn.primary:hover { background: var(--accent2); border-color: var(--accent2); }
+
+  /* PAGES */
+  .page { display: none; padding: 32px; animation: fadeIn 0.3s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* GRID */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+
+  /* STAT CARDS */
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    opacity: 0.08;
+  }
+  .stat-card.c1::before { background: var(--accent); }
+  .stat-card.c2::before { background: var(--teal); }
+  .stat-card.c3::before { background: var(--amber); }
+  .stat-card-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .stat-card-val { font-size: 32px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+  .stat-card-sub { font-size: 12px; color: var(--muted); }
+  .c1 .stat-card-val { color: var(--accent2); }
+  .c2 .stat-card-val { color: var(--teal); }
+  .c3 .stat-card-val { color: var(--amber); }
+
+  /* CARD */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title-text { display: flex; align-items: center; gap: 8px; }
+
+  /* SKILL BARS */
+  .skill-item { margin-bottom: 16px; }
+  .skill-item:last-child { margin-bottom: 0; }
+  .skill-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .skill-name-row { display: flex; align-items: center; gap: 8px; }
+  .skill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .skill-label { font-size: 13px; color: var(--text); }
+  .skill-pct { font-size: 12px; font-weight: 700; }
+  .bar-bg { height: 6px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+
+  /* MODULE CARDS */
+  .module-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .module-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: linear-gradient(135deg, transparent 60%, rgba(255,255,255,0.03));
+    pointer-events: none;
+  }
+  .module-card:hover {
+    border-color: var(--border2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .mod-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 14px;
+  }
+  .mod-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .mod-desc { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 14px; }
+  .mod-footer { display: flex; align-items: center; justify-content: space-between; }
+  .mod-progress-label { font-size: 11px; color: var(--muted); }
+  .mod-progress-val { font-size: 12px; font-weight: 700; }
+  .progress-mini { height: 4px; background: var(--bg3); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+  .progress-mini-fill { height: 100%; border-radius: 2px; }
+
+  /* TASKS */
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .task-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .task-check {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border2);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .task-check.done { background: var(--green); border-color: var(--green); }
+  .task-check.done::after { content: '✓'; font-size: 11px; color: #0f1117; font-weight: 800; }
+  .task-check.active { border-color: var(--blue); }
+  .task-title-row { font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+  .task-meta-row { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 12px; }
+  .task-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .tag-done { background: rgba(74,222,128,0.12); color: var(--green); }
+  .tag-active { background: rgba(96,165,250,0.12); color: var(--blue); }
+  .tag-pending { background: rgba(139,144,167,0.12); color: var(--muted); }
+  .tag-urgent { background: rgba(248,113,113,0.12); color: var(--coral); }
+
+  /* HERO WELCOME */
+  .hero-welcome {
+    background: linear-gradient(135deg, rgba(108,99,255,0.12) 0%, rgba(45,212,191,0.06) 100%);
+    border: 1px solid rgba(108,99,255,0.2);
+    border-radius: 20px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-welcome::before {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(108,99,255,0.15), transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-tag { font-size: 11px; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 600; }
+  .hero-name { font-family: 'Playfair Display', serif; font-size: 28px; color: var(--text); margin-bottom: 6px; }
+  .hero-sub { font-size: 14px; color: var(--muted); }
+  .hero-stats { display: flex; gap: 24px; margin-top: 20px; }
+  .hero-stat { }
+  .hero-stat-val { font-size: 20px; font-weight: 800; color: var(--text); }
+  .hero-stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* SECTIONS */
+  .section-title { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+
+  /* MODULE DETAIL */
+  .module-detail { display: none; }
+  .module-detail.show { display: block; }
+  .mod-header-band {
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .mod-h-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; opacity: 0.7; }
+  .mod-h-title { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 6px; }
+  .mod-h-desc { font-size: 14px; opacity: 0.75; line-height: 1.6; }
+
+  /* LESSON ROWS */
+  .lesson-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    background: var(--bg3);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .lesson-row:hover { background: var(--card2); }
+  .lesson-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .lesson-info { flex: 1; }
+  .lesson-title { font-size: 13.5px; font-weight: 600; margin-bottom: 3px; }
+  .lesson-meta { font-size: 12px; color: var(--muted); }
+  .lesson-status { font-size: 12px; }
+
+  /* DIARY */
+  .diary-entry {
+    background: var(--bg3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 3px solid transparent;
+  }
+  .diary-entry.e1 { border-left-color: var(--accent); }
+  .diary-entry.e2 { border-left-color: var(--teal); }
+  .diary-entry.e3 { border-left-color: var(--amber); }
+  .diary-date { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .diary-text { font-size: 13.5px; line-height: 1.7; color: var(--text); }
+  .diary-tags { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .diary-tag { font-size: 11px; padding: 2px 8px; border-radius: 8px; background: var(--card2); color: var(--muted); }
+
+  textarea {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 13.5px;
+    resize: none;
+    outline: none;
+    line-height: 1.7;
+    transition: border-color 0.2s;
+    margin-bottom: 12px;
+  }
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--muted); }
+
+  /* RATING STARS */
+  .stars { display: flex; gap: 6px; margin-bottom: 16px; }
+  .star { font-size: 22px; cursor: pointer; color: var(--bg3); filter: none; transition: all 0.15s; }
+  .star.lit { color: var(--amber); }
+  .star:hover { transform: scale(1.2); }
+
+  /* PEER REVIEW */
+  .peer-card {
+    background: var(--bg3);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 12px;
+  }
+  .peer-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .peer-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .peer-name { font-size: 13.5px; font-weight: 600; }
+  .peer-project { font-size: 12px; color: var(--muted); }
+  .peer-score { margin-left: auto; font-size: 20px; font-weight: 800; color: var(--amber); }
+  .peer-criteria { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .crit-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); }
+  .crit-val { font-weight: 700; color: var(--text); }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--card2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--text);
+    display: flex; align-items: center; gap: 10px;
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(.4,0,.2,1);
+    max-width: 300px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-icon { font-size: 18px; }
+
+  /* CIRCULAR PROGRESS */
+  .circ-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto 12px; }
+  .circ-wrap svg { transform: rotate(-90deg); }
+  .circ-bg { fill: none; stroke: var(--bg3); stroke-width: 8; }
+  .circ-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1); }
+  .circ-label {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px; font-weight: 800;
+    text-align: center;
+  }
+  .circ-sub { font-size: 9px; color: var(--muted); display: block; font-weight: 400; }
+
+  /* CALENDAR */
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .cal-day-name { font-size: 10px; color: var(--muted); text-align: center; text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 0; }
+  .cal-day {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cal-day:hover { background: var(--card2); color: var(--text); }
+  .cal-day.has-entry { background: rgba(108,99,255,0.15); color: var(--accent2); font-weight: 700; }
+  .cal-day.today { background: var(--accent); color: white; font-weight: 700; }
+  .cal-day.empty { cursor: default; }
+
+  /* NOTIFICATION DOT */
+  .notif-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--coral);
+    display: inline-block;
+    margin-left: 4px;
+  }
+
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  /* HEADING */
+  .page-heading { font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 6px; }
+  .page-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  .empty-state { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 10px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .chip-green { background: rgba(74,222,128,0.1); color: var(--green); }
+  .chip-accent { background: rgba(108,99,255,0.1); color: var(--accent2); }
+  .chip-amber { background: rgba(245,158,11,0.1); color: var(--amber); }
+
+  @media (max-width: 900px) {
+    .sidebar { width: 60px; }
+    .nav-item span, .nav-label, .logo-sub, .user-name, .user-role { display: none; }
+    .main { margin-left: 60px; }
+    .logo-mark { font-size: 14px; }
+    .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">SoftSkill Lab</div>
+    <div class="logo-sub">Информатика · КОБ</div>
+  </div>
+
+  <div class="nav-label">Негізгі</div>
+  <div class="nav-item active" onclick="showPage('dashboard', this)">
+    <span class="nav-icon">⊞</span>
+    <span>Дашборд</span>
+  </div>
+  <div class="nav-item" onclick="showPage('modules', this)">
+    <span class="nav-icon">◈</span>
+    <span>Модульдер</span>
+    <span class="nav-badge">4</span>
+  </div>
+  <div class="nav-item" onclick="showPage('tasks', this)">
+    <span class="nav-icon">✦</span>
+    <span>Тапсырмалар</span>
+    <span class="nav-badge">3</span>
+  </div>
+
+  <div class="nav-label">Даму</div>
+  <div class="nav-item" onclick="showPage('diary', this)">
+    <span class="nav-icon">◎</span>
+    <span>Рефлексия күнделігі</span>
+  </div>
+  <div class="nav-item" onclick="showPage('peer', this)">
+    <span class="nav-icon">⇄</span>
+    <span>Peer Review</span>
+  </div>
+  <div class="nav-item" onclick="showPage('progress', this)">
+    <span class="nav-icon">◑</span>
+    <span>Прогресс</span>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="user-chip">
+      <div class="avatar">АС</div>
+      <div>
+        <div class="user-name">Тохтамуратов Давлат</div>
+        <div class="user-role">2-курс · ИТ тобы</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">Дашборд</div>
+      <div class="topbar-meta" id="topbar-meta">Сәрсенбі, 7-апта</div>
+    </div>
+    <div class="topbar-right">
+      <button class="pill-btn" onclick="showToast('🔔 Жаңа хабарлама жоқ')">Хабарламалар</button>
+      <button class="pill-btn primary" onclick="showToast('✅ Прогресс сақталды!')">Сақтау</button>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div id="page-dashboard" class="page active">
+
+    <div class="hero-welcome">
+      <div class="hero-tag">🎓 Семестр: 2025 Қыс</div>
+      <div class="hero-name">Сәлем, Давлат! 👋</div>
+      <div class="hero-sub">Бүгін 3 тапсырма күтуде. Жалғастыр — ты молодец!</div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-val">72%</div>
+          <div class="hero-stat-label">Жалпы прогресс</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">4</div>
+          <div class="hero-stat-label">Орындалған жоба</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">7</div>
+          <div class="hero-stat-label">Апта өтті</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">18</div>
+          <div class="hero-stat-label">Рефлексия жазбасы</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="stat-card c1">
+        <div class="stat-card-label">Командалық жұмыс</div>
+        <div class="stat-card-val">82%</div>
+        <div class="stat-card-sub">↑ +12% соңғы аптадан</div>
+      </div>
+      <div class="stat-card c2">
+        <div class="stat-card-label">Коммуникация</div>
+        <div class="stat-card-val">68%</div>
+        <div class="stat-card-sub">↑ +8% өсті</div>
+      </div>
+      <div class="stat-card c3">
+        <div class="stat-card-label">Сыни ойлау</div>
+        <div class="stat-card-val">74%</div>
+        <div class="stat-card-sub">→ Тұрақты</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- SKILLS -->
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-text">◑ Икемді дағдылар деңгейі</div>
+          <span class="chip chip-accent">5 дағды</span>
+        </div>
+        <div class="skill-item">
+          <div class="skill-head">
+            <div class="skill-name-row"><div class="skill-dot" style="background:var(--accent)"></div><span class="skill-label">Командалық жұмыс</span></div>
+            <span class="skill-pct" style="color:var(--accent2)">82%</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:82%;background:var(--accent)"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-head">
+            <div class="skill-name-row"><div class="skill-dot" style="background:var(--blue)"></div><span class="skill-label">Коммуникация</span></div>
+            <span class="skill-pct" style="color:var(--blue)">68%</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:68%;background:var(--blue)"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-head">
+            <div class="skill-name-row"><div class="skill-dot" style="background:var(--teal)"></div><span class="skill-label">Сыни ойлау</span></div>
+            <span class="skill-pct" style="color:var(--teal)">74%</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:74%;background:var(--teal)"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-head">
+            <div class="skill-name-row"><div class="skill-dot" style="background:var(--amber)"></div><span class="skill-label">Уақыт менеджменті</span></div>
+            <span class="skill-pct" style="color:var(--amber)">55%</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:55%;background:var(--amber)"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-head">
+            <div class="skill-name-row"><div class="skill-dot" style="background:var(--coral)"></div><span class="skill-label">Шығармашылық</span></div>
+            <span class="skill-pct" style="color:var(--coral)">60%</span>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" style="width:60%;background:var(--coral)"></div></div>
+        </div>
+      </div>
+
+      <!-- TASKS -->
+      <div class="card">
+        <div class="card-title">
+          <div class="card-title-text">✦ Ағымдағы тапсырмалар</div>
+          <span class="chip chip-amber">3 белсенді</span>
+        </div>
+        <div class="task-item">
+          <div class="task-check done"></div>
+          <div>
+            <div class="task-title-row">Топтық IT-жоба: веб-сайт макеті</div>
+            <div class="task-meta-row"><span>3-модуль · 5 мүше</span> <span class="task-tag tag-done">Орындалды</span></div>
+          </div>
+        </div>
+        <div class="task-item">
+          <div class="task-check active"></div>
+          <div>
+            <div class="task-title-row">Кейс-стади: дерекқор жобасын талдау</div>
+            <div class="task-meta-row"><span>4-модуль · 3 күн қалды</span> <span class="task-tag tag-active">Орындалуда</span></div>
+          </div>
+        </div>
+        <div class="task-item">
+          <div class="task-check active"></div>
+          <div>
+            <div class="task-title-row">Peer review: топтас жұмысын бағалау</div>
+            <div class="task-meta-row"><span>Коммуникация · 1 күн</span> <span class="task-tag tag-urgent">Шұғыл</span></div>
+          </div>
+        </div>
+        <div class="task-item">
+          <div class="task-check"></div>
+          <div>
+            <div class="task-title-row">Рефлексия күнделігі · 7-апта</div>
+            <div class="task-meta-row"><span>Барлық модульдер · Жексенбі</span> <span class="task-tag tag-pending">Күтілуде</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULES MINI -->
+    <div class="section-title">Модульдер бойынша прогресс</div>
+    <div class="grid-4">
+      <div class="module-card" onclick="showPage('modules', document.querySelector('[onclick*=modules]'))">
+        <div class="mod-icon" style="background:rgba(108,99,255,0.12)">🤝</div>
+        <div class="mod-title">Командалық жұмыс</div>
+        <div class="mod-desc">Топтық жобалар, рөлдер, жауапкершілік</div>
+        <div class="mod-footer">
+          <span class="mod-progress-label">Прогресс</span>
+          <span class="mod-progress-val" style="color:var(--accent2)">82%</span>
+        </div>
+        <div class="progress-mini"><div class="progress-mini-fill" style="width:82%;background:var(--accent)"></div></div>
+      </div>
+      <div class="module-card" onclick="showPage('modules', document.querySelector('[onclick*=modules]'))">
+        <div class="mod-icon" style="background:rgba(96,165,250,0.12)">💬</div>
+        <div class="mod-title">Коммуникация</div>
+        <div class="mod-desc">Презентация, сөйлеу, peer review</div>
+        <div class="mod-footer">
+          <span class="mod-progress-label">Прогресс</span>
+          <span class="mod-progress-val" style="color:var(--blue)">68%</span>
+        </div>
+        <div class="progress-mini"><div class="progress-mini-fill" style="width:68%;background:var(--blue)"></div></div>
+      </div>
+      <div class="module-card" onclick="showPage('modules', document.querySelector('[onclick*=modules]'))">
+        <div class="mod-icon" style="background:rgba(45,212,191,0.12)">🧠</div>
+        <div class="mod-title">Сыни ойлау</div>
+        <div class="mod-desc">Кейс-стади, мәселені шешу</div>
+        <div class="mod-footer">
+          <span class="mod-progress-label">Прогресс</span>
+          <span class="mod-progress-val" style="color:var(--teal)">74%</span>
+        </div>
+        <div class="progress-mini"><div class="progress-mini-fill" style="width:74%;background:var(--teal)"></div></div>
+      </div>
+      <div class="module-card" onclick="showPage('modules', document.querySelector('[onclick*=modules]'))">
+        <div class="mod-icon" style="background:rgba(245,158,11,0.12)">⏱</div>
+        <div class="mod-title">Уақыт менеджменті</div>
+        <div class="mod-desc">Flipped classroom, жоспарлау</div>
+        <div class="mod-footer">
+          <span class="mod-progress-label">Прогресс</span>
+          <span class="mod-progress-val" style="color:var(--amber)">55%</span>
+        </div>
+        <div class="progress-mini"><div class="progress-mini-fill" style="width:55%;background:var(--amber)"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODULES ===== -->
+  <div id="page-modules" class="page">
+    <div class="page-heading">Модульдер</div>
+    <div class="page-sub">Икемді дағдыларды дамытуға арналған 4 модуль</div>
+
+    <div id="modules-list">
+      <div class="grid-2">
+        <div class="module-card" onclick="openModule('team')">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <div class="mod-icon" style="background:rgba(108,99,255,0.12);margin:0">🤝</div>
+            <div>
+              <div class="mod-title">1-модуль: Командалық жұмыс</div>
+              <span class="chip chip-green">Белсенді</span>
+            </div>
+          </div>
+          <div class="mod-desc">Топтық жобалар, рөлдер бөлу, жауапкершілік, нәтижеге жету. Нақты IT-жобалар арқылы командамен жұмыс жасауды үйренеміз.</div>
+          <div class="progress-mini" style="margin-top:12px"><div class="progress-mini-fill" style="width:82%;background:var(--accent)"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--muted)">
+            <span>6/8 сабақ</span><span style="color:var(--accent2);font-weight:700">82%</span>
+          </div>
+        </div>
+
+        <div class="module-card" onclick="openModule('comm')">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <div class="mod-icon" style="background:rgba(96,165,250,0.12);margin:0">💬</div>
+            <div>
+              <div class="mod-title">2-модуль: Коммуникация</div>
+              <span class="chip chip-accent">Орындалуда</span>
+            </div>
+          </div>
+          <div class="mod-desc">Ауызша және жазбаша коммуникация, презентация дағдылары, конструктивті кері байланыс беру мен қабылдау.</div>
+          <div class="progress-mini" style="margin-top:12px"><div class="progress-mini-fill" style="width:68%;background:var(--blue)"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--muted)">
+            <span>5/8 сабақ</span><span style="color:var(--blue);font-weight:700">68%</span>
+          </div>
+        </div>
+
+        <div class="module-card" onclick="openModule('critical')">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <div class="mod-icon" style="background:rgba(45,212,191,0.12);margin:0">🧠</div>
+            <div>
+              <div class="mod-title">3-модуль: Сыни ойлау</div>
+              <span class="chip chip-accent">Орындалуда</span>
+            </div>
+          </div>
+          <div class="mod-desc">Мәселені талдау, кейс-стади, шешімдерді салыстыру, дәлелдеу. Информатика контекстіндегі нақты жағдаяттар.</div>
+          <div class="progress-mini" style="margin-top:12px"><div class="progress-mini-fill" style="width:74%;background:var(--teal)"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--muted)">
+            <span>6/8 сабақ</span><span style="color:var(--teal);font-weight:700">74%</span>
+          </div>
+        </div>
+
+        <div class="module-card" onclick="openModule('time')">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <div class="mod-icon" style="background:rgba(245,158,11,0.12);margin:0">⏱</div>
+            <div>
+              <div class="mod-title">4-модуль: Уақыт менеджменті</div>
+              <span class="chip chip-amber">Жаңадан бастады</span>
+            </div>
+          </div>
+          <div class="mod-desc">Flipped classroom форматы, жоспарлау, дедлайн, өнімділік. Күнделікті информатика тапсырмаларында қолдану.</div>
+          <div class="progress-mini" style="margin-top:12px"><div class="progress-mini-fill" style="width:55%;background:var(--amber)"></div></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--muted)">
+            <span>4/8 сабақ</span><span style="color:var(--amber);font-weight:700">55%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE DETAIL -->
+    <div id="module-detail" class="module-detail">
+      <button class="pill-btn" onclick="closeModule()" style="margin-bottom:20px">← Артқа</button>
+      <div class="mod-header-band" id="mod-header-band">
+        <div class="mod-h-tag" id="mod-h-tag"></div>
+        <div class="mod-h-title" id="mod-h-title"></div>
+        <div class="mod-h-desc" id="mod-h-desc"></div>
+      </div>
+      <div id="mod-lessons"></div>
+    </div>
+  </div>
+
+  <!-- ===== TASKS ===== -->
+  <div id="page-tasks" class="page">
+    <div class="page-heading">Тапсырмалар</div>
+    <div class="page-sub">Барлық тапсырмалар, жобалар және мерзімдер</div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-title-text">🔥 Шұғыл</div></div>
+      <div class="task-item">
+        <div class="task-check active"></div>
+        <div style="flex:1">
+          <div class="task-title-row">Peer review: Асылбек жұмысын бағалау</div>
+          <div class="task-meta-row"><span>Коммуникация модулі</span> <span class="task-tag tag-urgent">1 күн қалды</span></div>
+          <div style="margin-top:8px"><button class="pill-btn primary" onclick="showPage('peer', document.querySelector('[onclick*=peer]'));showToast('📝 Peer Review парақшасына өтті')">Бағалауға өту →</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-title-text">📋 Орындалуда</div></div>
+      <div class="task-item">
+        <div class="task-check active"></div>
+        <div>
+          <div class="task-title-row">Кейс-стади: дерекқор жобасын талдау</div>
+          <div class="task-meta-row"><span>Сыни ойлау · 3-модуль</span> <span class="task-tag tag-active">3 күн</span></div>
+        </div>
+      </div>
+      <div class="task-item">
+        <div class="task-check active"></div>
+        <div>
+          <div class="task-title-row">Топтық жоба: мобильді қосымша прототипі</div>
+          <div class="task-meta-row"><span>Командалық жұмыс · 5 мүше</span> <span class="task-tag tag-active">5 күн</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-title-text">⏳ Күтілуде</div></div>
+      <div class="task-item">
+        <div class="task-check"></div>
+        <div>
+          <div class="task-title-row">Рефлексия күнделігі · 7-апта</div>
+          <div class="task-meta-row"><span>Барлық модульдер</span> <span class="task-tag tag-pending">Жексенбі</span></div>
+        </div>
+      </div>
+      <div class="task-item">
+        <div class="task-check"></div>
+        <div>
+          <div class="task-title-row">Уақыт менеджменті: апталық жоспар</div>
+          <div class="task-meta-row"><span>4-модуль</span> <span class="task-tag tag-pending">Дүйсенбі</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-title-text">✅ Орындалды</div></div>
+      <div class="task-item">
+        <div class="task-check done"></div>
+        <div><div class="task-title-row" style="color:var(--muted);text-decoration:line-through">Топтық IT-жоба: веб-сайт макеті</div><div class="task-meta-row"><span>3-модуль · 5 мүше</span> <span class="task-tag tag-done">Орындалды</span></div></div>
+      </div>
+      <div class="task-item">
+        <div class="task-check done"></div>
+        <div><div class="task-title-row" style="color:var(--muted);text-decoration:line-through">Презентация: командадағы рөлім</div><div class="task-meta-row"><span>Коммуникация</span> <span class="task-tag tag-done">Орындалды</span></div></div>
+      </div>
+      <div class="task-item">
+        <div class="task-check done"></div>
+        <div><div class="task-title-row" style="color:var(--muted);text-decoration:line-through">Рефлексия · 6-апта</div><div class="task-meta-row"><span>Барлық модульдер</span> <span class="task-tag tag-done">Орындалды</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DIARY ===== -->
+  <div id="page-diary" class="page">
+    <div class="page-heading">Рефлексия күнделігі</div>
+    <div class="page-sub">Апталық өзін-өзі бағалау және ой-пікірлер</div>
+
+    <div class="grid-2">
+      <div>
+        <!-- NEW ENTRY -->
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-title"><div class="card-title-text">✍️ Жаңа жазба</div></div>
+          <div style="margin-bottom:12px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Бұл аптада не үйрендіңіз?</div>
+            <textarea id="diary-text" rows="4" placeholder="Бүгін мен... Маған қиын болды... Мен байқадым..."></textarea>
+          </div>
+          <div style="margin-bottom:8px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Аптаны бағалаңыз:</div>
+            <div class="stars" id="stars">
+              <span class="star" onclick="rateStar(1)">★</span>
+              <span class="star" onclick="rateStar(2)">★</span>
+              <span class="star" onclick="rateStar(3)">★</span>
+              <span class="star" onclick="rateStar(4)">★</span>
+              <span class="star" onclick="rateStar(5)">★</span>
+            </div>
+          </div>
+          <div style="margin-bottom:16px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Тақырып:</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="pill-btn" id="tag-team" onclick="toggleTag('team',this)">🤝 Командалық жұмыс</button>
+              <button class="pill-btn" id="tag-comm" onclick="toggleTag('comm',this)">💬 Коммуникация</button>
+              <button class="pill-btn" id="tag-crit" onclick="toggleTag('crit',this)">🧠 Сыни ойлау</button>
+              <button class="pill-btn" id="tag-time" onclick="toggleTag('time',this)">⏱ Уақыт</button>
+            </div>
+          </div>
+          <button class="pill-btn primary" onclick="saveDiary()" style="width:100%">Жазбаны сақтау ✦</button>
+        </div>
+      </div>
+
+      <div>
+        <!-- CALENDAR -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-title"><div class="card-title-text">📅 Мамыр 2025</div></div>
+          <div class="cal-grid">
+            <div class="cal-day-name">Дс</div><div class="cal-day-name">Сс</div><div class="cal-day-name">Ср</div>
+            <div class="cal-day-name">Бс</div><div class="cal-day-name">Жм</div><div class="cal-day-name">Сб</div><div class="cal-day-name">Жк</div>
+            <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div>
+            <div class="cal-day">1</div><div class="cal-day has-entry">2</div><div class="cal-day">3</div><div class="cal-day">4</div>
+            <div class="cal-day has-entry">5</div><div class="cal-day">6</div><div class="cal-day today">7</div>
+            <div class="cal-day">8</div><div class="cal-day has-entry">9</div><div class="cal-day">10</div><div class="cal-day">11</div>
+            <div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div>
+            <div class="cal-day">15</div><div class="cal-day has-entry">16</div><div class="cal-day">17</div><div class="cal-day">18</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;padding:0 0 12px">
+          <div style="width:10px;height:10px;border-radius:50%;background:rgba(108,99,255,0.5)"></div> Жазба бар күн
+        </div>
+      </div>
+    </div>
+
+    <!-- PREVIOUS ENTRIES -->
+    <div class="section-title">Бұрынғы жазбалар</div>
+    <div id="diary-entries">
+      <div class="diary-entry e1">
+        <div class="diary-date">🗓 2 мамыр 2025 · ★★★★★</div>
+        <div class="diary-text">Бүгін командамен веб-сайт макетін дайындадық. Мен дизайн бөлімін жасадым. Аселмен пікір таласы болды, бірақ ақырында келістік. Командада ымыраға келуді үйрендім — бұл маңызды дағды екен.</div>
+        <div class="diary-tags"><span class="diary-tag">🤝 Командалық жұмыс</span><span class="diary-tag">💬 Коммуникация</span></div>
+      </div>
+      <div class="diary-entry e2">
+        <div class="diary-date">🗓 9 мамыр 2025 · ★★★★☆</div>
+        <div class="diary-text">Кейс-стади тапсырмасын орындадым. Дерекқор жобасының мәселесін талдауда қиналдым — деректер жеткіліксіз болды. Бірақ альтернативті шешімдер іздеп, 3 нұсқа ұсындым. Сыни ойлау дегеніміз — мүмкіндіктерді кеңейту екен.</div>
+        <div class="diary-tags"><span class="diary-tag">🧠 Сыни ойлау</span></div>
+      </div>
+      <div class="diary-entry e3">
+        <div class="diary-date">🗓 16 мамыр 2025 · ★★★☆☆</div>
+        <div class="diary-text">Уақыт менеджменті модулін бастадым. Flipped classroom форматы қызық — үйде видео көріп, сабақта практика жасаймыз. Дегенмен, видеоны уақытында қарауды ұмытып қалдым. Ертең ерте оянып, қарауды жоспарладым.</div>
+        <div class="diary-tags"><span class="diary-tag">⏱ Уақыт менеджменті</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PEER REVIEW ===== -->
+  <div id="page-peer" class="page">
+    <div class="page-heading">Peer Review</div>
+    <div class="page-sub">Топтас жұмыстарын бағалау және кері байланыс</div>
+
+    <div class="grid-2">
+      <!-- REVIEW FORM -->
+      <div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-text">📝 Жаңа бағалау</div></div>
+          <div class="peer-head" style="padding:12px;background:var(--bg3);border-radius:12px;margin-bottom:16px">
+            <div class="peer-avatar" style="background:rgba(96,165,250,0.15);color:var(--blue)">АН</div>
+            <div>
+              <div class="peer-name">Асылбек Нұрланов</div>
+              <div class="peer-project">Жоба: Мектеп деректер базасы</div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--muted)">Критерийлер бойынша баға (1-5)</div>
+            <div style="display:grid;gap:12px">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Командалық үлес</span><span id="v1" style="font-weight:700;color:var(--accent2)">3</span></div>
+                <input type="range" min="1" max="5" value="3" step="1" oninput="document.getElementById('v1').textContent=this.value" style="width:100%">
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Коммуникация сапасы</span><span id="v2" style="font-weight:700;color:var(--blue)">4</span></div>
+                <input type="range" min="1" max="5" value="4" step="1" oninput="document.getElementById('v2').textContent=this.value" style="width:100%">
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Шығармашылық тәсіл</span><span id="v3" style="font-weight:700;color:var(--teal)">4</span></div>
+                <input type="range" min="1" max="5" value="4" step="1" oninput="document.getElementById('v3').textContent=this.value" style="width:100%">
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span>Уақытты сақтауы</span><span id="v4" style="font-weight:700;color:var(--amber)">3</span></div>
+                <input type="range" min="1" max="5" value="3" step="1" oninput="document.getElementById('v4').textContent=this.value" style="width:100%">
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Конструктивті кері байланыс:</div>
+            <textarea rows="3" placeholder="Жақсы жағы... Жақсарту керек... Ұсынысым..."></textarea>
+          </div>
+          <button class="pill-btn primary" onclick="showToast('✅ Peer review жіберілді!')" style="width:100%">Жіберу ✦</button>
+        </div>
+      </div>
+
+      <!-- RECEIVED REVIEWS -->
+      <div>
+        <div class="section-title">Маған келген бағалаулар</div>
+        <div class="peer-card">
+          <div class="peer-head">
+            <div class="peer-avatar" style="background:rgba(108,99,255,0.15);color:var(--accent2)">ДМ</div>
+            <div>
+              <div class="peer-name">Дина Мұхамедова</div>
+              <div class="peer-project">Веб-сайт жобасы бойынша</div>
+            </div>
+            <div class="peer-score">4.2</div>
+          </div>
+          <div class="peer-criteria">
+            <div class="crit-item"><span>Командалық үлес</span><span class="crit-val">5/5</span></div>
+            <div class="crit-item"><span>Коммуникация</span><span class="crit-val">4/5</span></div>
+            <div class="crit-item"><span>Шығармашылық</span><span class="crit-val">4/5</span></div>
+            <div class="crit-item"><span>Уақыт</span><span class="crit-val">4/5</span></div>
+          </div>
+          <div style="margin-top:12px;padding:10px;background:var(--bg2);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.6">
+            💬 «Айдана жобаның дизайн бөлімін өте жақсы орындады. Командаға идея ұсынғанда нақты болды. Болашақта техникалық бөлімге де қатысуын ұсынамын.»
+          </div>
+        </div>
+
+        <div class="peer-card">
+          <div class="peer-head">
+            <div class="peer-avatar" style="background:rgba(45,212,191,0.15);color:var(--teal)">АС</div>
+            <div>
+              <div class="peer-name">Арман Сейіт</div>
+              <div class="peer-project">Презентация бойынша</div>
+            </div>
+            <div class="peer-score">3.8</div>
+          </div>
+          <div class="peer-criteria">
+            <div class="crit-item"><span>Командалық үлес</span><span class="crit-val">4/5</span></div>
+            <div class="crit-item"><span>Коммуникация</span><span class="crit-val">4/5</span></div>
+            <div class="crit-item"><span>Шығармашылық</span><span class="crit-val">3/5</span></div>
+            <div class="crit-item"><span>Уақыт</span><span class="crit-val">4/5</span></div>
+          </div>
+          <div style="margin-top:12px;padding:10px;background:var(--bg2);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.6">
+            💬 «Презентация анық болды, слайдтар жинақты. Дауыс дикциясын жақсартса болады. Жалпы жақсы жұмыс!»
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROGRESS ===== -->
+  <div id="page-progress" class="page">
+    <div class="page-heading">Менің прогресім</div>
+    <div class="page-sub">Икемді дағдылар динамикасы және жетістіктер</div>
+
+    <div class="grid-4" style="text-align:center">
+      <div class="card" style="padding:24px 16px">
+        <div class="circ-wrap">
+          <svg viewBox="0 0 100 100" width="100" height="100">
+            <circle class="circ-bg" cx="50" cy="50" r="42"/>
+            <circle class="circ-fill" cx="50" cy="50" r="42" stroke="var(--accent)"
+              stroke-dasharray="263.9" stroke-dashoffset="47"/>
+          </svg>
+          <div class="circ-label" style="color:var(--accent2)">82%<span class="circ-sub">Командалық<br>жұмыс</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--green)">↑ +12%</div>
+      </div>
+      <div class="card" style="padding:24px 16px">
+        <div class="circ-wrap">
+          <svg viewBox="0 0 100 100" width="100" height="100">
+            <circle class="circ-bg" cx="50" cy="50" r="42"/>
+            <circle class="circ-fill" cx="50" cy="50" r="42" stroke="var(--blue)"
+              stroke-dasharray="263.9" stroke-dashoffset="84.4"/>
+          </svg>
+          <div class="circ-label" style="color:var(--blue)">68%<span class="circ-sub">Коммуни-<br>кация</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--green)">↑ +8%</div>
+      </div>
+      <div class="card" style="padding:24px 16px">
+        <div class="circ-wrap">
+          <svg viewBox="0 0 100 100" width="100" height="100">
+            <circle class="circ-bg" cx="50" cy="50" r="42"/>
+            <circle class="circ-fill" cx="50" cy="50" r="42" stroke="var(--teal)"
+              stroke-dasharray="263.9" stroke-dashoffset="68.6"/>
+          </svg>
+          <div class="circ-label" style="color:var(--teal)">74%<span class="circ-sub">Сыни<br>ойлау</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">→ Тұрақты</div>
+      </div>
+      <div class="card" style="padding:24px 16px">
+        <div class="circ-wrap">
+          <svg viewBox="0 0 100 100" width="100" height="100">
+            <circle class="circ-bg" cx="50" cy="50" r="42"/>
+            <circle class="circ-fill" cx="50" cy="50" r="42" stroke="var(--amber)"
+              stroke-dasharray="263.9" stroke-dashoffset="118.7"/>
+          </svg>
+          <div class="circ-label" style="color:var(--amber)">55%<span class="circ-sub">Уақыт<br>менеджменті</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--amber)">↑ +5%</div>
+      </div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div class="section-title">Жетістіктер 🏆</div>
+    <div class="grid-3">
+      <div class="card" style="text-align:center;padding:24px">
+        <div style="font-size:36px;margin-bottom:8px">🥇</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Топ лидері</div>
+        <div style="font-size:12px;color:var(--muted)">Командалық жобада лидер болды</div>
+      </div>
+      <div class="card" style="text-align:center;padding:24px">
+        <div style="font-size:36px;margin-bottom:8px">🎤</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Шешен</div>
+        <div style="font-size:12px;color:var(--muted)">3 презентацияны сәтті өтті</div>
+      </div>
+      <div class="card" style="text-align:center;padding:24px">
+        <div style="font-size:36px;margin-bottom:8px">📔</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Рефлексиялаушы</div>
+        <div style="font-size:12px;color:var(--muted)">18 күнделік жазбасы толтырылды</div>
+      </div>
+      <div class="card" style="text-align:center;padding:24px;opacity:0.4">
+        <div style="font-size:36px;margin-bottom:8px">⏰</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Уақыт шебері</div>
+        <div style="font-size:12px;color:var(--muted)">Барлық дедлайндарды сақтау керек</div>
+      </div>
+      <div class="card" style="text-align:center;padding:24px;opacity:0.4">
+        <div style="font-size:36px;margin-bottom:8px">🧩</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Инноватор</div>
+        <div style="font-size:12px;color:var(--muted)">Шығармашылық модулін аяқтау керек</div>
+      </div>
+      <div class="card" style="text-align:center;padding:24px;opacity:0.4">
+        <div style="font-size:36px;margin-bottom:8px">🌟</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Жұлдыз студент</div>
+        <div style="font-size:12px;color:var(--muted)">Барлық модульдерді 80%+ аяқтау</div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-text">📈 Апталық белсенділік</div></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;height:100px;padding-top:8px">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="flex:1;width:100%;background:var(--accent);opacity:0.7;border-radius:4px 4px 0 0;min-height:20px;height:60%"></div>
+          <span style="font-size:10px;color:var(--muted)">Дс</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="flex:1;width:100%;background:var(--accent);opacity:0.7;border-radius:4px 4px 0 0;height:80%"></div>
+          <span style="font-size:10px;color:var(--muted)">Сс</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="flex:1;width:100%;background:var(--accent);border-radius:4px 4px 0 0;height:100%"></div>
+          <span style="font-size:10px;color:var(--muted)">Ср</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="flex:1;width:100%;background:var(--accent);opacity:0.5;border-radius:4px 4px 0 0;height:40%"></div>
+          <span style="font-size:10px;color:var(--muted)">Бс</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="flex:1;width:100%;background:var(--accent);opacity:0.7;border-radius:4px 4px 0 0;height:70%"></div>
+          <span style="font-size:10px;color:var(--muted)">Жм</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="flex:1;width:100%;background:var(--teal);opacity:0.5;border-radius:4px 4px 0 0;height:30%"></div>
+          <span style="font-size:10px;color:var(--muted)">Сб</span>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+          <div style="flex:1;width:100%;background:var(--bg3);border-radius:4px 4px 0 0;height:10%"></div>
+          <span style="font-size:10px;color:var(--muted)">Жк</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">✅</span>
+  <span id="toast-msg">Сақталды!</span>
+</div>
+
+<script>
+const modules = {
+  team: {
+    tag: '1-модуль · Командалық жұмыс',
+    title: 'Топпен жұмыс жасау өнері',
+    desc: 'Топтық жобалар, рөлдер бөлу, жауапкершілік, нәтижеге жету. Нақты IT-жобалар арқылы командамен жұмыс жасауды үйренеміз.',
+    bg: 'rgba(108,99,255,0.1)', color: '#a78bfa',
+    lessons: [
+      { n:'01', title:'Команда рөлдері: кім не жасайды?', meta:'Теория · 45 мин', done:true },
+      { n:'02', title:'Мақсат қою және KPI бөлу', meta:'Практика · 60 мин', done:true },
+      { n:'03', title:'Жоба: мектеп сайтының макеті', meta:'Топтық жоба · 2 апта', done:true },
+      { n:'04', title:'Конфликт жағдайларда шешім табу', meta:'Кейс-стади · 45 мин', done:true },
+      { n:'05', title:'Agile принциптері IT-жобада', meta:'Теория + практика · 90 мин', done:true },
+      { n:'06', title:'Топтық презентация жасау', meta:'Практика · 60 мин', done:true },
+      { n:'07', title:'Ретроспектива: не үйрендік?', meta:'Рефлексия · 30 мин', done:false },
+      { n:'08', title:'Финалды жоба қорғау', meta:'Топтық қорғау · 90 мин', done:false },
+    ]
+  },
+  comm: {
+    tag: '2-модуль · Коммуникация',
+    title: 'Сөйлеу, жазу, тыңдау',
+    desc: 'Ауызша және жазбаша коммуникация, презентация дағдылары, конструктивті кері байланыс беру мен қабылдау.',
+    bg: 'rgba(96,165,250,0.1)', color: '#60a5fa',
+    lessons: [
+      { n:'01', title:'Тиімді коммуникацияның 7 принципі', meta:'Теория · 45 мин', done:true },
+      { n:'02', title:'Слайд дизайны және визуализация', meta:'Практика · 60 мин', done:true },
+      { n:'03', title:'Публикалық сөйлеу: дауыс, поза', meta:'Тренинг · 45 мин', done:true },
+      { n:'04', title:'Конструктивті кері байланыс беру', meta:'Практика · 60 мин', done:true },
+      { n:'05', title:'Peer Review: топтас жұмысын бағалау', meta:'Белсенді тапсырма', done:false },
+      { n:'06', title:'Техникалық мәтін жазу дағдысы', meta:'Жазбаша · 45 мин', done:false },
+      { n:'07', title:'Онлайн коммуникация этикасы', meta:'Теория · 30 мин', done:false },
+      { n:'08', title:'Финал: жеке презентация', meta:'Жеке қорғау · 10 мин', done:false },
+    ]
+  },
+  critical: {
+    tag: '3-модуль · Сыни ойлау',
+    title: 'Мәселені талдау өнері',
+    desc: 'Мәселені талдау, кейс-стади, шешімдерді салыстыру, дәлелдеу. Информатика контекстіндегі нақты жағдаяттар.',
+    bg: 'rgba(45,212,191,0.1)', color: '#2dd4bf',
+    lessons: [
+      { n:'01', title:'Сыни ойлау дегеніміз не?', meta:'Теория · 45 мин', done:true },
+      { n:'02', title:'Bloom таксономиясы бойынша сұрақтар', meta:'Практика · 60 мин', done:true },
+      { n:'03', title:'Кейс 1: дерекқор жобасының мәселесі', meta:'Топтық кейс · 90 мин', done:true },
+      { n:'04', title:'Шешімдерді салыстыру матрицасы', meta:'Практика · 45 мин', done:true },
+      { n:'05', title:'Кейс 2: кибербезопасность оқиғасы', meta:'Белсенді тапсырма', done:false },
+      { n:'06', title:'Дәлелді пікір жазу', meta:'Жазбаша · 60 мин', done:false },
+      { n:'07', title:'Дебат: 2 топ, 2 шешім', meta:'Пікірталас · 45 мин', done:false },
+      { n:'08', title:'Финал: өз кейсіңді ұсын', meta:'Жеке кейс · 15 мин', done:false },
+    ]
+  },
+  time: {
+    tag: '4-модуль · Уақыт менеджменті',
+    title: 'Уақытты басқару шебері',
+    desc: 'Flipped classroom форматы, жоспарлау, дедлайн, өнімділік. Күнделікті информатика тапсырмаларында қолдану.',
+    bg: 'rgba(245,158,11,0.1)', color: '#f59e0b',
+    lessons: [
+      { n:'01', title:'Уақыт ұрлаушылар: кімдер?', meta:'Теория · 30 мин', done:true },
+      { n:'02', title:'Pomodoro техникасы + практика', meta:'Тренинг · 45 мин', done:true },
+      { n:'03', title:'Flipped Classroom: үйде — теория', meta:'Видео + үй тапсырмасы', done:true },
+      { n:'04', title:'Апталық жоспар: Notion / дәптер', meta:'Практика · 45 мин', done:true },
+      { n:'05', title:'Приоритеттер: Эйзенхауэр матрицасы', meta:'Белсенді тапсырма', done:false },
+      { n:'06', title:'Дедлайн психологиясы', meta:'Теория · 30 мин', done:false },
+      { n:'07', title:'Жеке өнімділік жоспары', meta:'Практика · 60 мин', done:false },
+      { n:'08', title:'Финал: апталық рефлексия + жоспар', meta:'Жазбаша · 30 мин', done:false },
+    ]
+  }
+};
+
+let selectedTags = [];
+let starRating = 0;
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  const titles = {
+    dashboard:'Дашборд', modules:'Модульдер', tasks:'Тапсырмалар',
+    diary:'Рефлексия күнделігі', peer:'Peer Review', progress:'Прогресс'
+  };
+  document.getElementById('topbar-title').textContent = titles[id] || id;
+}
+
+function openModule(key) {
+  const m = modules[key];
+  document.getElementById('modules-list').style.display = 'none';
+  const detail = document.getElementById('module-detail');
+  detail.classList.add('show');
+  const band = document.getElementById('mod-header-band');
+  band.style.background = m.bg;
+  band.style.color = m.color;
+  document.getElementById('mod-h-tag').textContent = m.tag;
+  document.getElementById('mod-h-title').textContent = m.title;
+  document.getElementById('mod-h-desc').textContent = m.desc;
+  const ll = document.getElementById('mod-lessons');
+  ll.innerHTML = '';
+  m.lessons.forEach((l, i) => {
+    const done = l.done;
+    const active = !done && m.lessons[i-1]?.done;
+    const color = done ? 'var(--green)' : active ? m.color : 'var(--muted)';
+    const bg = done ? 'rgba(74,222,128,0.1)' : active ? m.bg : 'var(--bg3)';
+    ll.innerHTML += `<div class="lesson-row">
+      <div class="lesson-num" style="background:${bg};color:${color}">${l.n}</div>
+      <div class="lesson-info">
+        <div class="lesson-title" style="color:${done?'var(--muted)':''};${done?'text-decoration:line-through':''}">${l.title}</div>
+        <div class="lesson-meta">${l.meta}</div>
+      </div>
+      <div class="lesson-status">${done?'✅':active?'▶':'🔒'}</div>
+    </div>`;
+  });
+}
+
+function closeModule() {
+  document.getElementById('modules-list').style.display = '';
+  document.getElementById('module-detail').classList.remove('show');
+}
+
+function rateStar(n) {
+  starRating = n;
+  document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('lit', i < n));
+}
+
+function toggleTag(key, btn) {
+  const i = selectedTags.indexOf(key);
+  if (i === -1) { selectedTags.push(key); btn.style.background = 'var(--card2)'; btn.style.color = 'var(--text)'; btn.style.borderColor = 'var(--accent)'; }
+  else { selectedTags.splice(i,1); btn.style.background = ''; btn.style.color = ''; btn.style.borderColor = ''; }
+}
+
+function saveDiary() {
+  const txt = document.getElementById('diary-text').value.trim();
+  if (!txt) { showToast('⚠️ Мәтін енгізіңіз!'); return; }
+  const tagMap = { team:'🤝 Командалық жұмыс', comm:'💬 Коммуникация', crit:'🧠 Сыни ойлау', time:'⏱ Уақыт менеджменті' };
+  const colors = ['e1','e2','e3'];
+  const c = colors[Math.floor(Math.random()*3)];
+  const stars = '★'.repeat(starRating) + '☆'.repeat(5-starRating);
+  const tagsHtml = selectedTags.map(t=>`<span class="diary-tag">${tagMap[t]}</span>`).join('');
+  const entry = `<div class="diary-entry ${c}">
+    <div class="diary-date">🗓 Бүгін · ${stars}</div>
+    <div class="diary-text">${txt}</div>
+    ${tagsHtml ? `<div class="diary-tags">${tagsHtml}</div>` : ''}
+  </div>`;
+  document.getElementById('diary-entries').insertAdjacentHTML('afterbegin', entry);
+  document.getElementById('diary-text').value = '';
+  selectedTags = [];
+  starRating = 0;
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('lit'));
+  document.querySelectorAll('[id^=tag-]').forEach(b => { b.style.background=''; b.style.color=''; b.style.borderColor=''; });
+  showToast('📔 Жазба сақталды!');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
